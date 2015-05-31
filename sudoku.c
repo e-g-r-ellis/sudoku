@@ -89,12 +89,38 @@ void readSudoku(struct Sudoku *puzzle) {
 	}
 }
 
+struct Combinations {
+	int *data;
+	int *size;
+};
+
+struct Combinations *newCombinations(int size) {
+	struct Combinations *result;
+	result = calloc(1, sizeof(struct Combinations));
+	if (result != NULL) {
+		result->data = calloc(size * size * N_DIGITS, sizeof(int));
+	}
+	return result;
+}
+
+void freeCombinations(struct Combinations *comb) {
+	if (comb != NULL) {
+		free(comb->data);
+		free(comb);
+	}
+}
+
 int main(int argc, char **argv) {
-	struct Sudoku *puzzle = newSudoku(9);
+	int size = 9;
+	struct Sudoku *puzzle = newSudoku(size);
 	printSudoku(puzzle);
 	readSudoku(puzzle);
 	printSudoku(puzzle);
+
+	struct Combinations *comb = newCombinations(size);
+
 	fflush(stderr);
+	freeCombinations(comb);
 	freeSudoku(puzzle);
 	// Read sudoku
 	// While not complete
