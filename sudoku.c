@@ -91,7 +91,7 @@ void readSudoku(struct Sudoku *puzzle) {
 
 struct Combinations {
 	int *data;
-	int *size;
+	int size;
 };
 
 struct Combinations *newCombinations(int size) {
@@ -99,6 +99,7 @@ struct Combinations *newCombinations(int size) {
 	result = calloc(1, sizeof(struct Combinations));
 	if (result != NULL) {
 		result->data = calloc(size * size * N_DIGITS, sizeof(int));
+		result->size = size;
 	}
 	return result;
 }
@@ -110,6 +111,52 @@ void freeCombinations(struct Combinations *comb) {
 	}
 }
 
+void populateAllCombinations(struct Combinations *comb, struct Sudoku *puzzle) {
+	int y, x, i;
+	int *value = comb->data;
+	int *data = puzzle->data;
+	for (y = 0; y < puzzle->size; y++) {
+		for (x = 0; x < puzzle->size; x++) {
+			if (*data == 0) {
+				for (i = 0; i < N_DIGITS; i++) {
+					*value = 1;
+					value++;
+				}
+			} else {
+				for (i = 0; i < N_DIGITS; i++) {
+					if (*data == (i+1)) {
+						*value = 1;
+					} else {
+						*value = 0;
+					}
+					value++;
+				}
+			}
+			data++;
+		}
+	}
+}
+
+void printCombinations(struct Combinations *comb) {
+	int y, x, i;
+	int *value = comb->data;
+	for (y = 0; y < comb->size; y++) {
+		for (x = 0; x < comb->size; x++) {
+			printf("[");
+			for (i = 0; i < N_DIGITS; i++) {
+				if (*value == 0) {
+					printf(" ");
+				} else {
+					printf("%d", i+1);
+				}
+				value++;
+			}
+			printf("]");
+		}
+		printf("\n");
+	}
+}
+
 int main(int argc, char **argv) {
 	int size = 9;
 	struct Sudoku *puzzle = newSudoku(size);
@@ -118,13 +165,12 @@ int main(int argc, char **argv) {
 	printSudoku(puzzle);
 
 	struct Combinations *comb = newCombinations(size);
+	printCombinations(comb);
+	populateAllCombinations(comb, puzzle);
+	printCombinations(comb);
 
 	fflush(stderr);
 	freeCombinations(comb);
 	freeSudoku(puzzle);
-	// Read sudoku
-	// While not complete
-		// Solve sudoku
-		// Print sudoku
 	return 0;
 }
