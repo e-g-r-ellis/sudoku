@@ -16,6 +16,13 @@ struct Sudoku *newSudoku(int size) {
 	return puzzle;
 }
 
+void freeSudoku(struct Sudoku *puzzle) {
+	if (puzzle) {
+		free(puzzle->data);
+		free(puzzle);
+	}
+}
+
 void printSudoku(struct Sudoku *puzzle) {
 	printf("Sudoku:\n");
 	int x,y;
@@ -88,6 +95,7 @@ int main(int argc, char **argv) {
 	readSudoku(puzzle);
 	printSudoku(puzzle);
 	fflush(stderr);
+	freeSudoku(puzzle);
 	// Read sudoku
 	// While not complete
 		// Solve sudoku
