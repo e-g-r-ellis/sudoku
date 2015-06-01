@@ -170,11 +170,24 @@ int getUniqueValueAt(struct Combinations *comb, int y, int x) {
 void enforceUniqueRow(struct Combinations *comb, int y, int x) {
 	int tx, i;
 	int value = getUniqueValueAt(comb, y, x);
-	printf("enforce(%d,%d):%d\n", y, x, value);
+	printf("enforceRow(%d,%d):%d\n", y, x, value);
 	int *data;
 	for (tx = 0; tx < comb->size; tx++) {
 		if (x != tx) {
 			data = comb->data + (y * comb->size * N_DIGITS) + (tx * N_DIGITS) + value - 1;
+			*data = 0;
+		}
+	}
+}
+
+void enforceUniqueColumn(struct Combinations *comb, int y, int x) {
+	int ty, i;
+	int value = getUniqueValueAt(comb, y, x);
+	printf("enforceColumn(%d,%d)\n", y, x);
+	int *data;
+	for (ty = 0; ty < comb->size; ty++) {
+		if (y != ty) {
+			data = comb->data + (ty * comb->size * N_DIGITS) + (x * N_DIGITS) + value - 1;
 			*data = 0;
 		}
 	}
@@ -191,12 +204,17 @@ int main(int argc, char **argv) {
 	printCombinations(comb);
 	populateAllCombinations(comb, puzzle);
 	printCombinations(comb);
-	fprintf(stderr,"1,2\n");
 	enforceUniqueRow(comb, 0, 1);
+	printCombinations(comb);
+	enforceUniqueColumn(comb, 0, 1);
 	printCombinations(comb);
 	enforceUniqueRow(comb, 0, 5);
 	printCombinations(comb);
+	enforceUniqueColumn(comb, 0, 5);
+	printCombinations(comb);
 	enforceUniqueRow(comb, 1, 0);
+	printCombinations(comb);
+	enforceUniqueColumn(comb, 1, 0);
 	printCombinations(comb);
 
 	fflush(stderr);
