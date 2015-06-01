@@ -157,6 +157,29 @@ void printCombinations(struct Combinations *comb) {
 	}
 }
 
+int getUniqueValueAt(struct Combinations *comb, int y, int x) {
+	int i, value;
+	for (i = 0; i < N_DIGITS; i++) {
+                if (*(comb->data + (y * comb->size * N_DIGITS) + (x * N_DIGITS) + i) != 0) {
+                        value = i+1;
+                }
+        }
+	return value;
+}
+
+void enforceUniqueRow(struct Combinations *comb, int y, int x) {
+	int tx, i;
+	int value = getUniqueValueAt(comb, y, x);
+	printf("enforce(%d,%d):%d\n", y, x, value);
+	int *data;
+	for (tx = 0; tx < comb->size; tx++) {
+		if (x != tx) {
+			data = comb->data + (y * comb->size * N_DIGITS) + (tx * N_DIGITS) + value - 1;
+			*data = 0;
+		}
+	}
+}
+
 int main(int argc, char **argv) {
 	int size = 9;
 	struct Sudoku *puzzle = newSudoku(size);
@@ -167,6 +190,13 @@ int main(int argc, char **argv) {
 	struct Combinations *comb = newCombinations(size);
 	printCombinations(comb);
 	populateAllCombinations(comb, puzzle);
+	printCombinations(comb);
+	fprintf(stderr,"1,2\n");
+	enforceUniqueRow(comb, 0, 1);
+	printCombinations(comb);
+	enforceUniqueRow(comb, 0, 5);
+	printCombinations(comb);
+	enforceUniqueRow(comb, 1, 0);
 	printCombinations(comb);
 
 	fflush(stderr);
